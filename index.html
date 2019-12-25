@@ -162,11 +162,71 @@
         [2n, 0n]
       ];
 
+      const infinite1 = [
+        [0n, 5n],
+        [2n, 4n],
+        [2n, 5n],
+        [4n, 1n],
+        [4n, 2n],
+        [4n, 3n],
+        [6n, 0n],
+        [6n, 1n],
+        [6n, 2n],
+        [7n, 1n]
+      ];
+
+      const infinite2 = [
+        [0n, 0n],
+        [0n, 1n],
+        [0n, 4n],
+        [1n, 0n],
+        [1n, 3n],
+        [2n, 0n],
+        [2n, 3n],
+        [2n, 4n],
+        [3n, 2n],
+        [4n, 0n],
+        [4n, 2n],
+        [4n, 3n],
+        [4n, 4n]
+      ];
+
+      const infinite3 = [
+        [0n, 0n],
+        [1n, 0n],
+        [2n, 0n],
+        [3n, 0n],
+        [4n, 0n],
+        [5n, 0n],
+        [6n, 0n],
+        [7n, 0n],
+        [9n, 0n],
+        [10n, 0n],
+        [11n, 0n],
+        [12n, 0n],
+        [13n, 0n],
+        [17n, 0n],
+        [18n, 0n],
+        [19n, 0n],
+        [26n, 0n],
+        [27n, 0n],
+        [28n, 0n],
+        [29n, 0n],
+        [30n, 0n],
+        [31n, 0n],
+        [32n, 0n],
+        [34n, 0n],
+        [35n, 0n],
+        [36n, 0n],
+        [37n, 0n],
+        [38n, 0n]
+      ];
+
       function offset(figure, [dx, dy]) {
         return figure.map(([x, y]) => [x + dx, y + dy]);
       }
 
-      const cellSize = 5n;
+      const cellSize = 2n;
 
       let viewWidth = BigInt(canvas.width) / cellSize + 1n;
       let viewHeight = BigInt(canvas.height) / cellSize + 1n;
@@ -200,16 +260,16 @@
         const duration = end - start;
         console.debug(duration);
 
-        let nextStepTimeout = 10 - duration;
+        let nextStepTimeout = 3 - duration;
         if (nextStepTimeout <= 0) {
-          nextStepTimeout = 1;
           console.warn(`Generation took ${-nextStepTimeout} ms too long`);
+          nextStepTimeout = 1;
         }
 
         setTimeout(() => next(new Matrix(matrix)), nextStepTimeout);
       }
 
-      next(new Matrix(offset(rPentomino, [viewWidth / 2n, viewHeight / 2n])));
+      next(new Matrix(offset(infinite3, [viewWidth / 7n, viewHeight / 2n])));
     </script>
   </body>
 </html>
