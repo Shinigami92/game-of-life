@@ -226,6 +226,56 @@
         [38n, 0n]
       ];
 
+      const RileysBreeder = [
+        // 1st LWSS
+        [0n, 39n],
+        [1n, 40n],
+        [2n, 40n],
+        [3n, 37n],
+        [3n, 40n],
+        [4n, 38n],
+        [4n, 39n],
+        [4n, 40n],
+
+        // 2nd LWSS
+        [93n, 28n],
+        [94n, 29n],
+        [95n, 29n],
+        [96n, 26n],
+        [96n, 29n],
+        [97n, 27n],
+        [97n, 28n],
+        [97n, 29n],
+
+        // 3th LWSS
+        [130n, 2n],
+        [131n, 3n],
+        [132n, 3n],
+        [133n, 0n],
+        [133n, 3n],
+        [134n, 1n],
+        [134n, 2n],
+        [134n, 3n],
+
+        // Thing
+        [130n, 6n],
+        [131n, 7n],
+        [131n, 10n],
+        [132n, 8n],
+        [132n, 9n],
+        [132n, 10n],
+
+        // 4th LWSS
+        [130n, 16n],
+        [131n, 17n],
+        [132n, 17n],
+        [133n, 14n],
+        [133n, 17n],
+        [134n, 15n],
+        [134n, 16n],
+        [134n, 17n]
+      ];
+
       function offset(figure, [dx, dy]) {
         return figure.map(([x, y]) => [x + dx, y + dy]);
       }
@@ -332,7 +382,9 @@
         setTimeout(() => next(new Matrix(matrix)), nextStepTimeout);
       }
 
-      next(new Matrix(offset(infinite3, [viewWidth / 7n, viewHeight / 2n])));
+      next(
+        new Matrix(offset(RileysBreeder, [viewWidth / 7n, viewHeight / 2n]))
+      );
     </script>
   </body>
 </html>
