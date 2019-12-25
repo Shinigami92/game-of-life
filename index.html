@@ -94,83 +94,84 @@
         }
       }
 
-      const initialMatrices = {
-        blinker: new Matrix([
-          [0n, 0n],
-          [1n, 0n],
-          [2n, 0n]
-        ]),
-        glider: new Matrix([
-          [0n, 1n],
-          [1n, 2n],
-          [2n, 0n],
-          [2n, 1n],
-          [2n, 2n]
-        ]),
-        gliderGun: new Matrix([
-          // Left Block
-          [0n, 4n],
-          [0n, 5n],
-          [1n, 4n],
-          [1n, 5n],
+      const blinker = [
+        [0n, 0n],
+        [1n, 0n],
+        [2n, 0n]
+      ];
 
-          // Left
-          [10n, 4n],
-          [10n, 5n],
-          [10n, 6n],
-          [11n, 3n],
-          [11n, 7n],
-          [12n, 2n],
-          [12n, 8n],
-          [13n, 2n],
-          [13n, 8n],
-          [14n, 5n],
-          [15n, 3n],
-          [15n, 7n],
-          [16n, 4n],
-          [16n, 5n],
-          [16n, 6n],
-          [17n, 5n],
+      const glider = [
+        [0n, 1n],
+        [1n, 2n],
+        [2n, 0n],
+        [2n, 1n],
+        [2n, 2n]
+      ];
 
-          // Right
-          [20n, 2n],
-          [20n, 3n],
-          [20n, 4n],
-          [21n, 2n],
-          [21n, 3n],
-          [21n, 4n],
-          [22n, 1n],
-          [22n, 5n],
-          [24n, 0n],
-          [24n, 1n],
-          [24n, 5n],
-          [24n, 6n],
+      const gliderGun = [
+        // Left Block
+        [0n, 4n],
+        [0n, 5n],
+        [1n, 4n],
+        [1n, 5n],
 
-          // Right Block
-          [34n, 2n],
-          [34n, 3n],
-          [35n, 2n],
-          [35n, 3n]
-        ])
-      };
+        // Left
+        [10n, 4n],
+        [10n, 5n],
+        [10n, 6n],
+        [11n, 3n],
+        [11n, 7n],
+        [12n, 2n],
+        [12n, 8n],
+        [13n, 2n],
+        [13n, 8n],
+        [14n, 5n],
+        [15n, 3n],
+        [15n, 7n],
+        [16n, 4n],
+        [16n, 5n],
+        [16n, 6n],
+        [17n, 5n],
+
+        // Right
+        [20n, 2n],
+        [20n, 3n],
+        [20n, 4n],
+        [21n, 2n],
+        [21n, 3n],
+        [21n, 4n],
+        [22n, 1n],
+        [22n, 5n],
+        [24n, 0n],
+        [24n, 1n],
+        [24n, 5n],
+        [24n, 6n],
+
+        // Right Block
+        [34n, 2n],
+        [34n, 3n],
+        [35n, 2n],
+        [35n, 3n]
+      ];
 
       const cellSize = 10n;
 
       let viewWidth = BigInt(canvas.width) / cellSize + 1n;
       let viewHeight = BigInt(canvas.height) / cellSize + 1n;
-      console.log({ viewWidth, viewHeight });
+      console.debug({ viewWidth, viewHeight });
 
       window.addEventListener("resize", () => {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
         viewWidth = BigInt(canvas.width) / cellSize + 1n;
         viewHeight = BigInt(canvas.height) / cellSize + 1n;
-        console.log({ viewWidth, viewHeight });
+        console.debug({ viewWidth, viewHeight });
       });
 
       function next(matrix) {
         context.clearRect(0, 0, canvas.width, canvas.height);
 
+        const start = Date.now();
         for (const [x, y] of matrix.getLivingCells()) {
           if (x >= 0n && x < viewWidth) {
             if (y >= 0n && y < viewHeight) {
@@ -183,11 +184,15 @@
             }
           }
         }
+        const end = Date.now();
+        const duration = end - start;
+        console.debug(duration);
 
-        setTimeout(() => next(new Matrix(matrix)), 100);
+        const nextStepTimeout = Math.max(10 - duration, 1);
+        setTimeout(() => next(new Matrix(matrix)), nextStepTimeout);
       }
 
-      next(initialMatrices.gliderGun);
+      next(new Matrix(gliderGun));
     </script>
   </body>
 </html>
