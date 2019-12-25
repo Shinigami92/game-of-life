@@ -154,7 +154,19 @@
         [35n, 3n]
       ];
 
-      const cellSize = 10n;
+      const rPentomino = [
+        [0n, 1n],
+        [1n, 0n],
+        [1n, 1n],
+        [1n, 2n],
+        [2n, 0n]
+      ];
+
+      function offset(figure, [dx, dy]) {
+        return figure.map(([x, y]) => [x + dx, y + dy]);
+      }
+
+      const cellSize = 5n;
 
       let viewWidth = BigInt(canvas.width) / cellSize + 1n;
       let viewHeight = BigInt(canvas.height) / cellSize + 1n;
@@ -188,11 +200,16 @@
         const duration = end - start;
         console.debug(duration);
 
-        const nextStepTimeout = Math.max(10 - duration, 1);
+        let nextStepTimeout = 10 - duration;
+        if (nextStepTimeout <= 0) {
+          nextStepTimeout = 1;
+          console.warn(`Generation took ${-nextStepTimeout} ms too long`);
+        }
+
         setTimeout(() => next(new Matrix(matrix)), nextStepTimeout);
       }
 
-      next(new Matrix(gliderGun));
+      next(new Matrix(offset(rPentomino, [viewWidth / 2n, viewHeight / 2n])));
     </script>
   </body>
 </html>
