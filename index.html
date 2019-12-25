@@ -226,22 +226,22 @@
         return figure.map(([x, y]) => [x + dx, y + dy]);
       }
 
-      const cellSize = 2n;
+      let cellSize = 2n;
 
       let viewWidth = BigInt(canvas.width) / cellSize + 1n;
       let viewHeight = BigInt(canvas.height) / cellSize + 1n;
-      console.debug({ viewWidth, viewHeight });
+      let viewOffsetX = 0n;
+      let viewOffsetY = 0n;
 
-      window.addEventListener("resize", () => {
+      function resize() {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
         viewWidth = BigInt(canvas.width) / cellSize + 1n;
         viewHeight = BigInt(canvas.height) / cellSize + 1n;
         console.debug({ viewWidth, viewHeight });
-      });
+      }
 
-      let viewOffsetX = 0n;
-      let viewOffsetY = 0n;
+      window.addEventListener("resize", resize);
 
       window.addEventListener("keydown", event => {
         switch (event.key) {
@@ -257,10 +257,20 @@
           case "ArrowDown":
             viewOffsetY -= 1n;
             break;
+          case "+":
+            cellSize += 1n;
+            break;
+          case "-":
+            if (cellSize > 1n) {
+              cellSize -= 1n;
+            }
+            break;
           default:
             break;
         }
       });
+
+      resize();
 
       function next(matrix) {
         context.clearRect(0, 0, canvas.width, canvas.height);
