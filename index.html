@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Game of Life</title>
+    <style>
+      body {
+        padding: 0;
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas></canvas>
+    <script>
+      const canvas = document.getElementsByTagName("canvas")[0];
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      const context = canvas.getContext("2d");
+
+      class Matrix {
+        /** @type {Matrix|null} */
+        _previous = null;
+        /** @type {Map<string,'ALIVE'|'DEAD'>} */
+        _matrix = new Map();
+
+        /**
+         * @param {Array<[bigint, bigint]>|Matrix} from
+         */
+        constructor(from) {
+          if (from instanceof Matrix) {
+            this._previous = from;
+
+            for (const [x, y] of from.getLivingCells()) {
+              for (let dx = -1; dx <= 1; dx++) {
+                for (let dy = -1; dy <= 1; dy++) {
+                  const nx = x + BigInt(dx);
+                  const ny = y + BigInt(dy);
+                  const cell = from.getCell(nx, ny);
+                  const livingNeighbors = from.countLivingNeighbors(nx, ny);
+
+                  if (cell === "ALIVE") {
+                    if (livingNeighbors >= 2 && livingNeighbors <= 3) {
+                      // Rule 1: Any live cell with two or three neighbors survives
+                      this._matrix.set([nx, ny].join("_"), "ALIVE");
+                    }
+                  } else if (cell === "DEAD") {
+                    if (livingNeighbors === 3) {
+                      // Rule 2: Any dead cell with three live neighbors becomes a live cell
+                      this._matrix.set([nx, ny].join("_"), "ALIVE");
+                    }
+                  }
+                }
+              }
+            }
+          } else {
+            for (const [x, y] of from) {
+              this._matrix.set([x, y].join("_"), "ALIVE");
+            }
+          }
+        }
+
+        getCell(x, y) {
+          return this._matrix.get([x, y].join("_")) || "DEAD";
+        }
+
+        getLivingCells() {
+          const cells = [];
+          for (const [key, value] of this._matrix) {
+            if (value === "ALIVE") {
+              const [x, y] = key.split("_").map(BigInt);
+              cells.push([x, y]);
+            }
+          }
+          return cells;
+        }
+
+        countLivingNeighbors(x, y) {
+          let livingNeighbors = 0;
+          for (let dx = -1; dx <= 1; dx++) {
+            for (let dy = -1; dy <= 1; dy++) {
+              if (dx === 0 && dy === 0) {
+                continue;
+              }
+              const cell = this.getCell(x + BigInt(dx), y + BigInt(dy));
+              if (cell === "ALIVE") {
+                livingNeighbors += 1;
+              }
+            }
+          }
+          return livingNeighbors;
+        }
+      }
+
+      const initialMatrices = {
+        blinker: new Matrix([
+          [0n, 0n],
+          [1n, 0n],
+          [2n, 0n]
+        ]),
+        glider: new Matrix([
+          [0n, 1n],
+          [1n, 2n],
+          [2n, 0n],
+          [2n, 1n],
+          [2n, 2n]
+        ]),
+        gliderGun: new Matrix([
+          // Left Block
+          [0n, 4n],
+          [0n, 5n],
+          [1n, 4n],
+          [1n, 5n],
+
+          // Left
+          [10n, 4n],
+          [10n, 5n],
+          [10n, 6n],
+          [11n, 3n],
+          [11n, 7n],
+          [12n, 2n],
+          [12n, 8n],
+          [13n, 2n],
+          [13n, 8n],
+          [14n, 5n],
+          [15n, 3n],
+          [15n, 7n],
+          [16n, 4n],
+          [16n, 5n],
+          [16n, 6n],
+          [17n, 5n],
+
+          // Right
+          [20n, 2n],
+          [20n, 3n],
+          [20n, 4n],
+          [21n, 2n],
+          [21n, 3n],
+          [21n, 4n],
+          [22n, 1n],
+          [22n, 5n],
+          [24n, 0n],
+          [24n, 1n],
+          [24n, 5n],
+          [24n, 6n],
+
+          // Right Block
+          [34n, 2n],
+          [34n, 3n],
+          [35n, 2n],
+          [35n, 3n]
+        ])
+      };
+
+      const cellSize = 10n;
+
+      let viewWidth = BigInt(canvas.width) / cellSize + 1n;
+      let viewHeight = BigInt(canvas.height) / cellSize + 1n;
+      console.log({ viewWidth, viewHeight });
+
+      window.addEventListener("resize", () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        viewWidth = BigInt(canvas.width) / cellSize + 1n;
+        viewHeight = BigInt(canvas.height) / cellSize + 1n;
+        console.log({ viewWidth, viewHeight });
+      });
+
+      function next(matrix) {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+
+        for (const [x, y] of matrix.getLivingCells()) {
+          if (x >= 0n && x < viewWidth) {
+            if (y >= 0n && y < viewHeight) {
+              context.fillRect(
+                Number(x * cellSize),
+                Number(y * cellSize),
+                Number(cellSize),
+                Number(cellSize)
+              );
+            }
+          }
+        }
+
+        setTimeout(() => next(new Matrix(matrix)), 100);
+      }
+
+      next(initialMatrices.gliderGun);
+    </script>
+  </body>
+</html>
