@@ -351,10 +351,12 @@
 
       resize();
 
+      let generation = 1n;
+
       function next(matrix) {
         context.clearRect(0, 0, canvas.width, canvas.height);
 
-        const start = Date.now();
+        const startDraw = Date.now();
         for (const [x, y] of matrix.getLivingCells()) {
           let nx = x + viewOffsetX;
           let ny = y + viewOffsetY;
@@ -369,17 +371,30 @@
             }
           }
         }
-        const end = Date.now();
-        const duration = end - start;
-        console.debug(duration);
+        const endDraw = Date.now();
+        const durationDraw = endDraw - startDraw;
+
+        const startGenerate = Date.now();
+        const nextMatrix = new Matrix(matrix);
+        const endGenerate = Date.now();
+        const durationGenerate = endGenerate - startGenerate;
+
+        console.debug({
+          generation,
+          draw: `${durationDraw}ms`,
+          generate: `${durationGenerate}ms`
+        });
+
+        const duration = durationDraw + durationGenerate;
 
         let nextStepTimeout = 3 - duration;
         if (nextStepTimeout <= 0) {
-          console.warn(`Generation took ${-nextStepTimeout} ms too long`);
+          console.warn(`Generation took ${-nextStepTimeout}ms too long`);
           nextStepTimeout = 1;
         }
 
-        setTimeout(() => next(new Matrix(matrix)), nextStepTimeout);
+        generation++;
+        setTimeout(() => next(nextMatrix), nextStepTimeout);
       }
 
       next(
