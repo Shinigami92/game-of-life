@@ -42,6 +42,9 @@
                 for (let dy = -1; dy <= 1; dy++) {
                   const nx = x + BigInt(dx);
                   const ny = y + BigInt(dy);
+                  if (this._matrix.has([nx, ny].join("_"))) {
+                    continue;
+                  }
                   const cell = from.getCell(nx, ny);
                   const livingNeighbors = from.countLivingNeighbors(nx, ny);
 
