@@ -243,19 +243,24 @@
 
       window.addEventListener("resize", resize);
 
-      window.addEventListener("keydown", event => {
-        switch (event.key) {
+      const keyStates = new Map([
+        ["MoveX", 0n],
+        ["MoveY", 0n]
+      ]);
+
+      window.addEventListener("keydown", ({ key }) => {
+        switch (key) {
           case "ArrowLeft":
-            viewOffsetX += 1n;
+            keyStates.set("MoveX", 1n);
             break;
           case "ArrowRight":
-            viewOffsetX -= 1n;
+            keyStates.set("MoveX", -1n);
             break;
           case "ArrowUp":
-            viewOffsetY += 1n;
+            keyStates.set("MoveY", 1n);
             break;
           case "ArrowDown":
-            viewOffsetY -= 1n;
+            keyStates.set("MoveY", -1n);
             break;
           case "+":
             cellSize += 1n;
@@ -269,6 +274,26 @@
             break;
         }
       });
+
+      window.addEventListener("keyup", ({ key }) => {
+        switch (key) {
+          case "ArrowLeft":
+          case "ArrowRight":
+            keyStates.set("MoveX", 0n);
+            break;
+          case "ArrowUp":
+          case "ArrowDown":
+            keyStates.set("MoveY", 0n);
+            break;
+          default:
+            break;
+        }
+      });
+
+      setInterval(() => {
+        viewOffsetX += keyStates.get("MoveX");
+        viewOffsetY += keyStates.get("MoveY");
+      }, 10);
 
       resize();
 
